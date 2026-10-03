@@ -1,0 +1,9 @@
+{
+  "name": "AndroTerm Pro - Android & Web Desktop Terminal",
+  "description": "Realistic Android desktop terminal workstation with full Unix shell, camera/image OCR, automated visual code debugging, package manager, and ADB bridge.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
