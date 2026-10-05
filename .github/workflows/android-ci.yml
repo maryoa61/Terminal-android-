@@ -1,4 +1,4 @@
-name: Android CI/CD
+name: Web CI
 
 on:
   push:
@@ -9,34 +9,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-      
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ~/.android/build-cache
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-      
-      - name: Build with Gradle
-        run: ./gradlew build
-      
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build --if-present
+
       - name: Run tests
-        run: ./gradlew test
-        
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+        run: npm test --if-present
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: app-debug.apk
-          path: app/build/outputs/apk/debug/
+          name: web-build
+          path: dist/   # اگر پروژه CRA است build/ ، اگر Next.js است .next/ یا out/
+          if-no-files-found: warn
