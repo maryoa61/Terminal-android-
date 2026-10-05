@@ -1,0 +1,42 @@
+name: Android CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.android/build-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+      
+      - name: Build with Gradle
+        run: ./gradlew build
+      
+      - name: Run tests
+        run: ./gradlew test
+        
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: app-debug.apk
+          path: app/build/outputs/apk/debug/
